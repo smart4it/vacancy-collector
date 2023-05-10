@@ -1,0 +1,13 @@
+ ,---.                            ,--.    ,---.,--.,--------.      ,--      ,--
+'   .-',--,--,--. ,--,--.,--.--.,-'  '-. /    ||  |'--.  .--'      \  \    /  /
+`.  `-.|        |' ,-.  ||  .--''-.  .-'/  '  ||  |   |  |   |---|  \  \  /  /
+.-'    |  |  |  |\ '-'  ||  |     |  |  '--|  ||  |   |  |   |---|   \  \/  /
+`-----'`--`--`--' `--`--'`--'     `--'     `--'`--'   `--'            `----'
+-------------------------------------------------------------
+Profile: ${spring.profiles.active}
+
+Application name: ${spring.application.name}
+Application port: ${server.port}
+
+Database URL: ${spring.datasource.url}
+Database SCHEMA: ${spring.datasource.hikari.schema}
