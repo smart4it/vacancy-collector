@@ -1,10 +1,10 @@
-package ru.smart4it.vacancycollector.entity;
+package ru.smart4it.vacancycollector.persistence.task;
 
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.smart4it.vacancycollector.persistence.Status;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VacancyTask {
+public class Task {
 
     @Id
     private UUID id;

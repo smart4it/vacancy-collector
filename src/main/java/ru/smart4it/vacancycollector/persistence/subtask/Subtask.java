@@ -1,10 +1,11 @@
-package ru.smart4it.vacancycollector.entity;
+package ru.smart4it.vacancycollector.persistence.subtask;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.smart4it.vacancycollector.persistence.task.Task;
 
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ import java.util.UUID;
 @Table(name = "vacancy_subtask")
 @AllArgsConstructor
 @NoArgsConstructor
-public class VacancySubtask {
+public class Subtask {
 
     @Id
     private UUID id;
@@ -22,5 +23,5 @@ public class VacancySubtask {
     private boolean done;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vacancy_task_id")
-    private VacancyTask vacancyTask;
+    private Task task;
 }
