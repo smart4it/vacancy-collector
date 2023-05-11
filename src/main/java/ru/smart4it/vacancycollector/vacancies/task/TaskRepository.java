@@ -1,7 +1,7 @@
-package ru.smart4it.vacancycollector.persistence.task;
+package ru.smart4it.vacancycollector.vacancies.task;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.smart4it.vacancycollector.persistence.Status;
+import ru.smart4it.vacancycollector.vacancies.Status;
 
 import java.util.Optional;
 import java.util.UUID;
