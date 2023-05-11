@@ -1,4 +1,4 @@
-package ru.smart4it.vacancycollector.persistence.snapshot;
+package ru.smart4it.vacancycollector.vacancies.snapshot;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;

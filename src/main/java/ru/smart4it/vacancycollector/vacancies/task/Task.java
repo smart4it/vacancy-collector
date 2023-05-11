@@ -1,9 +1,9 @@
-package ru.smart4it.vacancycollector.persistence.task;
+package ru.smart4it.vacancycollector.vacancies.task;
 
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.smart4it.vacancycollector.persistence.Status;
+import ru.smart4it.vacancycollector.vacancies.Status;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

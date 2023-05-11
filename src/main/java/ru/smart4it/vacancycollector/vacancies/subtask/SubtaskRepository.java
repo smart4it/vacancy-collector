@@ -1,4 +1,4 @@
-package ru.smart4it.vacancycollector.persistence.subtask;
+package ru.smart4it.vacancycollector.vacancies.subtask;
 
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
