@@ -1,4 +1,4 @@
-package ru.smart4it.vacancycollector.entity;
+package ru.smart4it.vacancycollector.persistence;
 
 public enum Status {
 

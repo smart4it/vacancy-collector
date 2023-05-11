@@ -1,10 +1,10 @@
-package ru.smart4it.vacancycollector.entity;
+package ru.smart4it.vacancycollector.persistence.snapshot;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.boot.autoconfigure.web.WebProperties;
+import ru.smart4it.vacancycollector.persistence.task.Task;
+import ru.smart4it.vacancycollector.persistence.vacancy.Vacancy;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VacancySnapshot {
+public class Snapshot {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,5 +27,5 @@ public class VacancySnapshot {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vacancy_task_id")
-    private VacancyTask vacancyTask;
+    private Task task;
 }
