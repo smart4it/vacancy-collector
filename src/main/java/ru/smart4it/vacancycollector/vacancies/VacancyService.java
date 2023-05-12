@@ -1,6 +1,7 @@
 package ru.smart4it.vacancycollector.vacancies;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class VacancyService {
 
     private final VacancyRepository vacancyRepository;
@@ -60,6 +62,7 @@ public class VacancyService {
     @Scheduled(cron = "*/3 * * * * *")
     @Async
     public void saveVacancy() {
+        log.info("HhScheduler.saveVacancy() started");
         taskRepository.findFirstByStatus(Status.IN_PROGRESS).ifPresent(task -> {
             //Todo findByVacancyTaskId() с писсиместической блокировкой
             transactionTemplate.execute((i) -> {
@@ -68,6 +71,7 @@ public class VacancyService {
                 return this;
             });
         });
+        log.info("HhScheduler.saveVacancy() completed");
     }
 
     private void performSubtask(Subtask subtask) {
