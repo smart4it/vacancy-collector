@@ -19,7 +19,6 @@ ext {
 
 dependencies {
     implementation project(":hh_ru")
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:postgresql'
