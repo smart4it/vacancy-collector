@@ -1,3 +1,11 @@
+
+pluginManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
 rootProject.name = 'smart4it-vacancy-collector'
 
-include 'hh_ru', 'application'
+include 'application'
+include 'hh'
