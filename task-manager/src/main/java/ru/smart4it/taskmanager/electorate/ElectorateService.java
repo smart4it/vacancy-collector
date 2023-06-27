@@ -7,9 +7,11 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.smart4it.taskmanager.electorate.model.RegularInstance;
 import ru.smart4it.taskmanager.electorate.repository.RegularInstanceRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -21,15 +23,23 @@ public final class ElectorateService {
 
     private UUID instanceId;
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void registerRegularInstance() {
-        RegularInstance regularInstance = new RegularInstance();
-        regularInstanceRepository.save(regularInstance);
-        instanceId = regularInstance.getUuid();
-    }
-
-    @Scheduled
-    private void updateHeartBit() {
+    @Scheduled(fixedDelayString = "${task-manager.heartbeat.interval}")
+    @Transactional
+    public void updateHeartBit() {
+        if (instanceId == null) {
+            RegularInstance regularInstance = new RegularInstance();
+            regularInstanceRepository.save(regularInstance);
+            instanceId = regularInstance.getUuid();
+        }
+        Optional<RegularInstance> optionalRegularInstance = regularInstanceRepository.findById(instanceId);
+        if (optionalRegularInstance.isEmpty()) {
+            RegularInstance regularInstance = new RegularInstance();
+            regularInstanceRepository.save(regularInstance);
+            instanceId = regularInstance.getUuid();
+        } else {
+            RegularInstance regularInstance = optionalRegularInstance.get();
+            regularInstanceRepository.save(regularInstance);
+        }
         // if heartBit is valid
         // update heart bit for regular instance
     }
