@@ -1,4 +1,4 @@
-CREATE TABLE regular_instance
+CREATE TABLE leader_instance
 (
     instance_id    UUID PRIMARY KEY,
     timestamp      BIGINT  NOT NULL,
