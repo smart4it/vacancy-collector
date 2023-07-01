@@ -7,4 +7,6 @@ import java.util.UUID;
 
 public interface RegularInstanceRepository extends JpaRepository<RegularInstance, UUID> {
 
+    void deleteAllByLastHeartbeatIsBefore(Long lastHeartbeat);
+
 }

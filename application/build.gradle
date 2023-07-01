@@ -1,4 +1,5 @@
 plugins {
+    id 'java'
     id 'org.springframework.boot'
 }
 
@@ -9,5 +10,17 @@ dependencies {
 }
 
 bootJar {
-    enabled = true
+    enabled = false
+    archiveFileName = 'application.jar'
+    from(sourceSets.main.resources) {
+        into('BOOT-INF/classes')
+        duplicatesStrategy 'exclude'
+    }
+    from(project(':task-manager').sourceSets.main.output) {
+        into('BOOT-INF/classes')
+
+    }
+}
+jar {
+    enabled = false
 }
