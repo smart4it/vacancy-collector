@@ -77,4 +77,8 @@ subprojects {
             mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
         }
     }
+
+    bootJar {
+        enabled = false
+    }
 }

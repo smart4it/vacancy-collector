@@ -10,7 +10,7 @@ dependencies {
 }
 
 bootJar {
-    enabled = false
+    enabled = true
     archiveFileName = 'application.jar'
     from(sourceSets.main.resources) {
         into('BOOT-INF/classes')
@@ -21,6 +21,7 @@ bootJar {
 
     }
 }
+
 jar {
     enabled = false
 }
