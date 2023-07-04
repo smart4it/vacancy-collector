@@ -17,7 +17,7 @@ public class RegularInstance {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID instance_id;
+    private UUID instanceId;
 
     @Column(name = "last_heartbeat")
     private Long lastHeartbeat;
