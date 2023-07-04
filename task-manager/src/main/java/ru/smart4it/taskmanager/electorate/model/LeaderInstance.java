@@ -1,5 +1,6 @@
 package ru.smart4it.taskmanager.electorate.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Getter;
@@ -17,4 +18,7 @@ public class LeaderInstance {
 
     @Id
     private final UUID uuid;
+
+    @Column(name = "last_heartbeat")
+    private Long lastHeartbeat;
 }

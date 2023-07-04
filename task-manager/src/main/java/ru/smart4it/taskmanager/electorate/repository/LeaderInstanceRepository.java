@@ -6,4 +6,5 @@ import ru.smart4it.taskmanager.electorate.model.LeaderInstance;
 import java.util.UUID;
 
 public interface LeaderInstanceRepository extends JpaRepository<LeaderInstance, UUID> {
+    void deleteAllByLastHeartbeatIsBefore(long timeout);
 }
