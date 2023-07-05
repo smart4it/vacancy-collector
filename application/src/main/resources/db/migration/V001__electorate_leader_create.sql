@@ -1,7 +1,6 @@
 CREATE TABLE leader_instance
 (
-    instance_id    UUID PRIMARY KEY,
-    timestamp      BIGINT  NOT NULL,
-    last_heartbeat BIGINT  NOT NULL,
-    version        BIGINT  NOT NULL
+    id INTEGER PRIMARY KEY,
+    instance_id    UUID UNIQUE,
+    last_heartbeat BIGINT  NOT NULL
 );

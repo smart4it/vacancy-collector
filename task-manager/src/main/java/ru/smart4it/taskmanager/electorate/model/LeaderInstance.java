@@ -3,21 +3,24 @@ package ru.smart4it.taskmanager.electorate.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class LeaderInstance {
 
     @Id
-    private final UUID uuid;
+    private Integer id;
+
+    private UUID instanceId;
 
     @Column(name = "last_heartbeat")
     private Long lastHeartbeat;

@@ -7,13 +7,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import ru.smart4it.taskmanager.electorate.model.LeaderInstance;
 import ru.smart4it.taskmanager.electorate.model.RegularInstance;
 import ru.smart4it.taskmanager.electorate.repository.LeaderInstanceRepository;
 import ru.smart4it.taskmanager.electorate.repository.RegularInstanceRepository;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.util.Optional;
 import java.util.UUID;
+
+import static java.time.ZoneOffset.UTC;
 
 @Slf4j
 @Component
@@ -45,7 +48,7 @@ public class ElectorateService {
         log.debug("updateRegularInstanceHeartbeat started");
         RegularInstance regularInstance = new RegularInstance();
         regularInstance.setInstanceId(instanceId);
-        regularInstance.setLastHeartbeat(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        regularInstance.setLastHeartbeat(LocalDateTime.now().toEpochSecond(UTC));
         regularInstance = regularInstanceRepository.save(regularInstance);
         instanceId = regularInstance.getInstanceId();
         log.debug("updateRegularInstanceHeartbeat completed");
@@ -53,7 +56,7 @@ public class ElectorateService {
 
     @Scheduled(fixedDelayString = "${task-manager.regular.heartbeat.timeout}")
     public void removeExpiredRegularInstances() {
-        long timeout = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - regularTimeout / 1000;
+        long timeout = LocalDateTime.now().toEpochSecond(UTC) - regularTimeout / 1000;
         regularInstanceRepository.deleteAllByLastHeartbeatIsBefore(timeout);
 
     }
@@ -66,19 +69,26 @@ public class ElectorateService {
      * не позднее заданного промежутка времени.
      */
     @Scheduled(fixedDelayString = "${task-manager.leader.heartbeat.interval}")
-    @Transactional
     public void updateLeaderHeartbeat() {
-//        List<LeaderInstance> leaders = leaderInstanceRepository.findAll();
-//        if (leaders.size() == 1 && instanceId != null && instanceId.equals(leaders.get(0).getUuid())) {
-//            leaderInstanceRepository.save(leaders.get(0));
-//        }
+        if (instanceId == null) {
+            return;
+        }
+        leaderInstanceRepository.updateHeartBeat(instanceId, LocalDateTime.now().toEpochSecond(UTC));
     }
 
 
     @Scheduled(fixedDelayString = "${task-manager.leader.heartbeat.timeout}")
     @Transactional
-    public void removeExpiredLeader() {
-        long timeout = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - leaderTimeout / 1000;
-        leaderInstanceRepository.deleteAllByLastHeartbeatIsBefore(timeout);
+    public void determineLeader() {
+        long timeout = LocalDateTime.now().toEpochSecond(UTC) - leaderTimeout / 1000;
+        Optional<LeaderInstance> activeLeader = leaderInstanceRepository.findActiveLeader(timeout);
+        if (activeLeader.isPresent()) {
+            return;
+        }
+        Optional<LeaderInstance> activeLeaderWithBlocking = leaderInstanceRepository.findActiveLeaderAndLock(timeout);
+        if (activeLeaderWithBlocking.isEmpty()) {
+            LeaderInstance leader = new LeaderInstance(1, instanceId, LocalDateTime.now().toEpochSecond(UTC));
+            leaderInstanceRepository.save(leader);
+        }
     }
 }
