@@ -80,6 +80,9 @@ public class ElectorateService {
     @Scheduled(fixedDelayString = "${task-manager.leader.heartbeat.timeout}")
     @Transactional
     public void determineLeader() {
+        if (instanceId == null) {
+            return;
+        }
         long timeout = LocalDateTime.now().toEpochSecond(UTC) - leaderTimeout / 1000;
         Optional<LeaderInstance> activeLeader = leaderInstanceRepository.findActiveLeader(timeout);
         if (activeLeader.isPresent()) {
