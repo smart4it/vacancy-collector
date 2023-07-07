@@ -23,6 +23,8 @@ import static java.time.ZoneOffset.UTC;
 @RequiredArgsConstructor
 public class ElectorateService {
 
+    private final static int MS_PER_SECOND = 1000;
+
     private final RegularInstanceRepository regularInstanceRepository;
 
     private final LeaderInstanceRepository leaderInstanceRepository;
@@ -54,36 +56,40 @@ public class ElectorateService {
         log.debug("updateRegularInstanceHeartbeat completed");
     }
 
+    /**
+     * Удаляет неактивные экземпляры сервисов.
+     */
     @Scheduled(fixedDelayString = "${task-manager.regular.heartbeat.timeout}")
     public void removeExpiredRegularInstances() {
-        long timeout = LocalDateTime.now().toEpochSecond(UTC) - regularTimeout / 1000;
+        long timeout = LocalDateTime.now().toEpochSecond(UTC) - regularTimeout / MS_PER_SECOND;
         regularInstanceRepository.deleteAllByLastHeartbeatIsBefore(timeout);
 
     }
 
     /**
-     * Процедура выбора лидера.
+     * Выбор лидера.
      * <p>
-     * Выполняет регистрацию лидера, если активный лидер отсутствует.
-     * Активным считается лидер, для которого выполнялось обновление heartbeat
-     * не позднее заданного промежутка времени.
+     * Если активный лидер отсутствует, то устанавливает текущий экземпляр
+     * приложения лидером. Активным считается лидер, для которого выполнялось
+     * обновление heartbeat не позднее заданного промежутка времени.
+     * <p>
+     * Стоит отметить, что первый запрос на проверку лидера неблокирующий, что
+     * позволяет в большинстве случаев исключить длительное ожидание при
+     * одновременных запросах от нескольких сервисов. Если лидер отсутствует,
+     * то далее выполняется блокирующий запрос к таблице лидера, чтобы исключить
+     * одновременную установку лидера несколькими сервисами.
+     * <p>
+     * Т.к. в системе не может быть более одного лидера его идентификатор всегда
+     * равен 1, что позволяет избавиться от этапа периодической чистки таблицы
+     * лидеров (в отличие от обычных экземпляров).
      */
-    @Scheduled(fixedDelayString = "${task-manager.leader.heartbeat.interval}")
-    public void updateLeaderHeartbeat() {
-        if (instanceId == null) {
-            return;
-        }
-        leaderInstanceRepository.updateHeartBeat(instanceId, LocalDateTime.now().toEpochSecond(UTC));
-    }
-
-
     @Scheduled(fixedDelayString = "${task-manager.leader.heartbeat.timeout}")
     @Transactional
     public void determineLeader() {
         if (instanceId == null) {
             return;
         }
-        long timeout = LocalDateTime.now().toEpochSecond(UTC) - leaderTimeout / 1000;
+        long timeout = LocalDateTime.now().toEpochSecond(UTC) - leaderTimeout / MS_PER_SECOND;
         Optional<LeaderInstance> activeLeader = leaderInstanceRepository.findActiveLeader(timeout);
         if (activeLeader.isPresent()) {
             return;
@@ -93,5 +99,21 @@ public class ElectorateService {
             LeaderInstance leader = new LeaderInstance(1, instanceId, LocalDateTime.now().toEpochSecond(UTC));
             leaderInstanceRepository.save(leader);
         }
+    }
+
+    /**
+     * Обновляет heartbeat лидера.
+     * <p>
+     * Если текущий экземпляр зарегистрирован, то можно попробовать обновить его
+     * heartbeat в таблице лидера. Если текущий экземпляр не является лидером,
+     * то обновление не выполниться, т.к. {@code leader.instanceId} !=
+     * {@code current.instanceId}.
+     */
+    @Scheduled(fixedDelayString = "${task-manager.leader.heartbeat.interval}")
+    public void updateLeaderHeartbeat() {
+        if (instanceId == null) {
+            return;
+        }
+        leaderInstanceRepository.updateHeartBeat(instanceId, LocalDateTime.now().toEpochSecond(UTC));
     }
 }
