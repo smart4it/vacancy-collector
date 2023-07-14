@@ -53,6 +53,7 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
         implementation 'org.flywaydb:flyway-core'
+        implementation 'org.springframework.kafka:spring-kafka'
         compileOnly 'org.projectlombok:lombok'
         runtimeOnly 'org.postgresql:postgresql'
         annotationProcessor 'org.projectlombok:lombok'
@@ -63,6 +64,7 @@ subprojects {
         implementation platform('org.springframework.boot:spring-boot-dependencies:3.0.6')
         testImplementation platform("org.springframework.boot:spring-boot-dependencies:3.0.6")
         annotationProcessor platform("org.springframework.boot:spring-boot-dependencies:3.0.6")
+        testImplementation 'org.springframework.kafka:spring-kafka-test'
     }
 
 
