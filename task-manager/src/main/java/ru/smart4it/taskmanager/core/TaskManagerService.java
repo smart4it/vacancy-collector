@@ -1,4 +1,4 @@
-package ru.smart4it.taskmanager;
+package ru.smart4it.taskmanager.core;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,8 +6,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ru.smart4it.taskmanager.model.TaskTemplate;
-import ru.smart4it.taskmanager.repository.TaskTemplateRepository;
+import ru.smart4it.taskmanager.core.model.TaskTemplate;
+import ru.smart4it.taskmanager.core.repository.TaskTemplateRepository;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
