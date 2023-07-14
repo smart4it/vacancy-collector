@@ -1,10 +1,10 @@
 # vacancy-collector
 
-## Запуск приложения
+## Локальный запуск приложения
 
-Создать контейнер с БД
+Запустить инфраструктурные сервисы с помощью docker-compose из каталога .run/docker-compose.yaml
 ```shell
-docker run --name smart4it_db -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 postgres:15.2-alpine3.17
+docker-compose -p smart4it -f .run/docker-compose-local.yaml up
 ```
 
 Создать БД
