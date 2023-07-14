@@ -29,6 +29,18 @@ public class TaskTemplate {
 
     private String type;
 
+    /**
+     * version: 1
+     * taskType:
+     * request:
+     * 	url:
+     * 	queryParams: []
+     * 	body:
+     * paging:
+     * 	start:
+     * 	max:
+     * 	step:
+     */
     @Type(JsonType.class)
     private String specification;
 
