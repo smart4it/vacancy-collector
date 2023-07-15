@@ -16,3 +16,5 @@ create database smart4it_db;
 
 Для отображения доступных endpoint запустить приложение и перейти по url:
 http://host:port//swagger-ui.html (host - имя хоста, port - порт на котором поднято приложение)
+
+## Описание задач
