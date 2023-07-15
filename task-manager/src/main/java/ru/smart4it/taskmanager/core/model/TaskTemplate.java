@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
@@ -32,7 +33,7 @@ public class TaskTemplate {
 
     private String cronExpression;
 
-    private OffsetDateTime lastExecution;
+    private ZonedDateTime lastExecution;
 
     private Boolean deleted;
 }
