@@ -1,4 +1,4 @@
-package ru.smart4it.hh.vacancies.snapshot;
+package ru.smart4it.collectors.hh.snapshot;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;

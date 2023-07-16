@@ -5,7 +5,8 @@ plugins {
 
 dependencies {
     implementation (
-            project(":task-manager")
+            project(":task-manager"),
+            project(":collectors:hh")
     )
 }
 
@@ -17,6 +18,9 @@ bootJar {
         duplicatesStrategy 'exclude'
     }
     from(project(':task-manager').sourceSets.main.output) {
+        into('BOOT-INF/classes')
+    }
+    from(project(':collectors:hh').sourceSets.main.output) {
         into('BOOT-INF/classes')
 
     }

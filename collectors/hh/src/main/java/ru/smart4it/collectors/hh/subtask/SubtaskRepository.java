@@ -1,4 +1,4 @@
-package ru.smart4it.hh.vacancies.subtask;
+package ru.smart4it.collectors.hh.subtask;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -1,4 +1,4 @@
-package ru.smart4it.hh.web.dto;
+package ru.smart4it.collectors.hh.web.dto;
 
 import java.util.List;
 import java.util.Map;

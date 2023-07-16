@@ -33,11 +33,11 @@ public class TaskManagerService {
     @Scheduled(cron = "0/5 * * * * *")
     @Transactional
     public void createTasks() {
-        ZonedDateTime currentTime = ZonedDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime currentTime = OffsetDateTime.now();
         List<TaskTemplate> taskTemplates = taskTemplateRepository.findAllByDeletedIsFalse();
         for (TaskTemplate taskTemplate : taskTemplates) {
-            ZonedDateTime lastExecution = taskTemplate.getLastExecution().withZoneSameInstant(ZoneOffset.UTC);
-            ZonedDateTime nextExecution = CronExpression.parse(taskTemplate.getCronExpression()).next(lastExecution);
+            OffsetDateTime lastExecution = taskTemplate.getLastExecution();
+            OffsetDateTime nextExecution = CronExpression.parse(taskTemplate.getCronExpression()).next(lastExecution);
             if (nextExecution == null) {
                 return;
             }
