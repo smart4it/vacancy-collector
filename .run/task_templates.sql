@@ -20,4 +20,4 @@ INSERT INTO ms_vacancy.task_template (id,title,specification,cron_expression,las
         "total": 2000,
         "pageSize": 100
     }
-}','* */5 * * * ?','2023-07-15 23:15:00',false);
+}','* */5 * * * ?','2000-01-01 00:00:00',false);

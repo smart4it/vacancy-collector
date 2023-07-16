@@ -50,7 +50,7 @@ public class ElectorateService {
         log.debug("updateRegularInstanceHeartbeat started");
         RegularInstance regularInstance = new RegularInstance();
         regularInstance.setInstanceId(instanceId);
-        regularInstance.setLastHeartbeat(LocalDateTime.now().toEpochSecond(UTC));
+        regularInstance.setLastHeartbeat(LocalDateTime.now(UTC).toEpochSecond(UTC));
         regularInstance = regularInstanceRepository.save(regularInstance);
         instanceId = regularInstance.getInstanceId();
         log.debug("updateRegularInstanceHeartbeat completed");
@@ -61,7 +61,7 @@ public class ElectorateService {
      */
     @Scheduled(fixedDelayString = "${task-manager.regular.heartbeat.timeout}")
     public void removeExpiredRegularInstances() {
-        long timeout = LocalDateTime.now().toEpochSecond(UTC) - regularTimeout / MS_PER_SECOND;
+        long timeout = LocalDateTime.now(UTC).toEpochSecond(UTC) - regularTimeout / MS_PER_SECOND;
         regularInstanceRepository.deleteAllByLastHeartbeatIsBefore(timeout);
 
     }
@@ -89,14 +89,14 @@ public class ElectorateService {
         if (instanceId == null) {
             return;
         }
-        long timeout = LocalDateTime.now().toEpochSecond(UTC) - leaderTimeout / MS_PER_SECOND;
+        long timeout = LocalDateTime.now(UTC).toEpochSecond(UTC) - leaderTimeout / MS_PER_SECOND;
         Optional<LeaderInstance> activeLeader = leaderInstanceRepository.findActiveLeader(timeout);
         if (activeLeader.isPresent()) {
             return;
         }
         Optional<LeaderInstance> activeLeaderWithBlocking = leaderInstanceRepository.findActiveLeaderAndLock(timeout);
         if (activeLeaderWithBlocking.isEmpty()) {
-            LeaderInstance leader = new LeaderInstance(1, instanceId, LocalDateTime.now().toEpochSecond(UTC));
+            LeaderInstance leader = new LeaderInstance(1, instanceId, LocalDateTime.now(UTC).toEpochSecond(UTC));
             leaderInstanceRepository.save(leader);
         }
     }
@@ -114,6 +114,6 @@ public class ElectorateService {
         if (instanceId == null) {
             return;
         }
-        leaderInstanceRepository.updateHeartBeat(instanceId, LocalDateTime.now().toEpochSecond(UTC));
+        leaderInstanceRepository.updateHeartBeat(instanceId, LocalDateTime.now(UTC).toEpochSecond(UTC));
     }
 }
