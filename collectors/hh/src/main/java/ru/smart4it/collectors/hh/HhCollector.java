@@ -1,9 +1,18 @@
 package ru.smart4it.collectors.hh;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import ru.smart4it.collectors.hh.event.Task;
+
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -19,7 +28,18 @@ public class HhCollector {
 
     @KafkaListener(topics = "test")
     public void createTaskToSaveVacancies(String message) {
-        System.out.println(message);
+        Task task;
+        try {
+            task = new ObjectMapper().readValue(message, Task.class);
+            RestTemplate restTemplate = new RestTemplate();
+            String fooResourceUrl = task.requests().get(0).url();
+            ResponseEntity<String> response
+                    = restTemplate.getForEntity(fooResourceUrl, String.class);
+            System.out.println(response);
+        } catch (JsonProcessingException e) {
+            log.error(e.toString());
+        }
+
     }
 
 //    public void createTaskToSaveVacancies() {
