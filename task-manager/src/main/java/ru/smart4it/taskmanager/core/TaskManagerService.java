@@ -14,9 +14,6 @@ import ru.smart4it.taskmanager.core.model.TaskTemplate;
 import ru.smart4it.taskmanager.core.repository.TaskTemplateRepository;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -28,7 +25,7 @@ public class TaskManagerService {
 
     private final TaskTemplateRepository taskTemplateRepository;
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, String> smart4itKafkaTemplate;
 
     @Scheduled(cron = "0/5 * * * * *")
     @Transactional
@@ -51,7 +48,7 @@ public class TaskManagerService {
                 String specification = new ObjectMapper().writeValueAsString(specMap);
                 if (currentTime.isAfter(nextExecution)) {
                     taskTemplate.setLastExecution(currentTime);
-                    kafkaTemplate.send("test", specification);
+                    smart4itKafkaTemplate.send("test", specification);
                 }
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
