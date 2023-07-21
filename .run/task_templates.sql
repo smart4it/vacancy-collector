@@ -5,7 +5,7 @@ INSERT INTO task_template (id,title,specification,cron_expression,last_execution
     "timestamp": "",
     "title": "",
     "protocol": "http",
-    "type": "HH",
+    "type": "HH_VACANCY",
     "requests": [
         {
             "method": "GET",
