@@ -8,5 +8,5 @@ pluginManagement {
 rootProject.name = 'smart4it-vacancy-collector'
 
 include 'task-manager'
-include 'collectors:hh'
+include 'collector'
 include 'application'

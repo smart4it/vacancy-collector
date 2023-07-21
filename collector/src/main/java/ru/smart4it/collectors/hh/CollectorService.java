@@ -15,7 +15,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class HhCollector {
+public class CollectorService {
 
 //    private final VacancyRepository vacancyRepository;
 //    private final TaskRepository taskRepository;
