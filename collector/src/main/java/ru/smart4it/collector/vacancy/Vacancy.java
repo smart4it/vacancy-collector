@@ -1,4 +1,4 @@
-package ru.smart4it.collectors.hh.vacancy;
+package ru.smart4it.collector.vacancy;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;

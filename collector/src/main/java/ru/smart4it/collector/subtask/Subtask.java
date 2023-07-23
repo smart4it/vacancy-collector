@@ -1,11 +1,11 @@
-package ru.smart4it.collectors.hh.subtask;
+package ru.smart4it.collector.subtask;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.smart4it.collectors.hh.task.Task;
+import ru.smart4it.collector.task.Task;
 
 import java.util.UUID;
 

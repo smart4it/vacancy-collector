@@ -1,4 +1,4 @@
-package ru.smart4it.collectors.hh;
+package ru.smart4it.collector;
 
 public enum Status {
 

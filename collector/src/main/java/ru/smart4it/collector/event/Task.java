@@ -1,4 +1,4 @@
-package ru.smart4it.collectors.hh.event;
+package ru.smart4it.collector.event;
 
 import java.time.OffsetDateTime;
 import java.util.List;

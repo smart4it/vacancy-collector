@@ -1,4 +1,4 @@
-package ru.smart4it.collectors.hh.vacancy;
+package ru.smart4it.collector.vacancy;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

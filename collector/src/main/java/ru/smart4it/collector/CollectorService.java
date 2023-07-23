@@ -1,4 +1,4 @@
-package ru.smart4it.collectors.hh;
+package ru.smart4it.collector;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import ru.smart4it.collectors.hh.event.Task;
+import ru.smart4it.collector.event.Task;
 
 import java.util.UUID;
 

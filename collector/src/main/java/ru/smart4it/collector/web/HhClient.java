@@ -1,10 +1,10 @@
-package ru.smart4it.collectors.hh.web;
+package ru.smart4it.collector.web;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.smart4it.collectors.hh.web.dto.FoundDto;
-import ru.smart4it.collectors.hh.web.dto.VacanciesDto;
+import ru.smart4it.collector.web.dto.FoundDto;
+import ru.smart4it.collector.web.dto.VacanciesDto;
 
 @FeignClient(value = "hh-client", url = "https://api.hh.ru")
 public interface HhClient {

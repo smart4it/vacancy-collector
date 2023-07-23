@@ -6,7 +6,8 @@ plugins {
 dependencies {
     implementation (
             project(":task-manager"),
-            project(":collector")
+            project(":collector"),
+            project(":parser:hh")
     )
 }
 

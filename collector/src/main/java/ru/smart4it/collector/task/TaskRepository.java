@@ -1,7 +1,7 @@
-package ru.smart4it.collectors.hh.task;
+package ru.smart4it.collector.task;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.smart4it.collectors.hh.Status;
+import ru.smart4it.collector.Status;
 
 import java.util.Optional;
 import java.util.UUID;

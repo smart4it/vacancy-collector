@@ -1,9 +1,9 @@
-package ru.smart4it.collectors.hh.task;
+package ru.smart4it.collector.task;
 
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.smart4it.collectors.hh.Status;
+import ru.smart4it.collector.Status;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

@@ -1,9 +1,9 @@
-package ru.smart4it.collectors.hh.snapshot;
+package ru.smart4it.collector.snapshot;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.smart4it.collectors.hh.task.Task;
-import ru.smart4it.collectors.hh.vacancy.Vacancy;
+import ru.smart4it.collector.task.Task;
+import ru.smart4it.collector.vacancy.Vacancy;
 
 import java.time.LocalDateTime;
 
