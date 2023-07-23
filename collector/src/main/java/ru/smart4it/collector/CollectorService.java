@@ -24,20 +24,20 @@ public class CollectorService {
 //    private final HhClient hhClient;
 //    private final TransactionTemplate transactionTemplate;
 
-    @KafkaListener(topics = "test")
+    //@KafkaListener(topics = "test")
     public void createTaskToSaveVacancies(String message) {
-        Task task;
-        try {
-            task = new ObjectMapper().readValue(message, Task.class);
-            RestTemplate restTemplate = new RestTemplate();
-            String fooResourceUrl = task.requests().get(0).url();
-            UUID id = task.id();
-            ResponseEntity<String> response
-                    = restTemplate.getForEntity(fooResourceUrl, String.class);
-            System.out.println(response);
-        } catch (JsonProcessingException e) {
-            log.error(e.toString());
-        }
+//        Task task;
+//        try {
+//            task = new ObjectMapper().readValue(message, Task.class);
+//            RestTemplate restTemplate = new RestTemplate();
+//            String fooResourceUrl = task.requests().get(0).url();
+//            UUID id = task.id();
+//            ResponseEntity<String> response
+//                    = restTemplate.getForEntity(fooResourceUrl, String.class);
+//            System.out.println(response);
+//        } catch (JsonProcessingException e) {
+//            log.error(e.toString());
+//        }
 
     }
 

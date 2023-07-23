@@ -1,4 +1,4 @@
-INSERT INTO task_template (id,title,specification,cron_expression,last_execution,deleted) VALUES
+INSERT INTO ms_vacancy.task_template (id,title,specification,cron_expression,last_execution,deleted) VALUES
 	 ('ca2c1a31-b8e1-4df8-9f67-3d261b6daf7d','hh java','{
     "version": "1",
     "id": "",
@@ -13,7 +13,7 @@ INSERT INTO task_template (id,title,specification,cron_expression,last_execution
             "queryParams": [
 	            {
 	                "param": "text",
-	                "value": "java",
+	                "value": "java"
 	            }
             ],
             "body": ""
