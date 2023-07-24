@@ -1,4 +1,4 @@
-package ru.smart4it.collector.config;
+package ru.smart4it.parser.hh.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

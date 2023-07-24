@@ -8,10 +8,12 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.smart4it.parser.hh.event.Task;
+import ru.smart4it.parser.hh.event.VacanciesDto;
 import ru.smart4it.parser.hh.task.TaskEntity;
 import ru.smart4it.parser.hh.task.TaskRepository;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -30,6 +32,21 @@ public class HhParser {
             taskRepository.save(new TaskEntity(task.id(), task.title(), message, OffsetDateTime.now(), OffsetDateTime.now(), false));
 
             smart4itKafkaTemplate.send("test2", message);
+
+        } catch (JsonProcessingException e) {
+            log.error(e.toString());
+        }
+
+    }
+
+    @KafkaListener(topics = "test3")
+    public void getPartData(String message) {
+        VacanciesDto vacancies;
+        try {
+            vacancies = new ObjectMapper().readValue(message, VacanciesDto.class);
+            for (Map<String, Object> vacancy :  vacancies.items()) {
+                System.out.println(vacancy);
+            }
 
         } catch (JsonProcessingException e) {
             log.error(e.toString());
