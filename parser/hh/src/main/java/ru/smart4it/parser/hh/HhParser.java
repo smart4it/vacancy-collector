@@ -9,11 +9,14 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.smart4it.parser.hh.event.Task;
 import ru.smart4it.parser.hh.event.VacanciesDto;
+import ru.smart4it.parser.hh.task.HhVacancyEntity;
 import ru.smart4it.parser.hh.task.TaskEntity;
 import ru.smart4it.parser.hh.task.TaskRepository;
+import ru.smart4it.parser.hh.task.VacancyRepository;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -23,6 +26,8 @@ public class HhParser {
     private final KafkaTemplate<String, String> smart4itKafkaTemplate;
 
     private final TaskRepository taskRepository;
+
+    private final VacancyRepository vacancyRepository;
 
     @KafkaListener(topics = "test")
     public void createTaskToSaveVacancies(String message) {
@@ -45,7 +50,11 @@ public class HhParser {
         try {
             vacancies = new ObjectMapper().readValue(message, VacanciesDto.class);
             for (Map<String, Object> vacancy :  vacancies.items()) {
-                System.out.println(vacancy);
+                HhVacancyEntity hhVacancyEntity = new HhVacancyEntity();
+                hhVacancyEntity.setTaskId(UUID.randomUUID());
+                hhVacancyEntity.setDataId(vacancy.get("id").toString());
+                hhVacancyEntity.setData(new ObjectMapper().writeValueAsString(vacancy));
+                vacancyRepository.save(hhVacancyEntity);
             }
 
         } catch (JsonProcessingException e) {
