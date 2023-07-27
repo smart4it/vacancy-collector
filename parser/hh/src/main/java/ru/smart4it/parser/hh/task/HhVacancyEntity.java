@@ -3,6 +3,8 @@ package ru.smart4it.parser.hh.task;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -24,9 +26,9 @@ import java.util.UUID;
 public class HhVacancyEntity {
 
     @Id
-    private UUID taskId;
-
     private String dataId;
+
+    private UUID taskId;
 
     @Type(JsonType.class)
     private String data;

@@ -26,6 +26,7 @@ public class CollectorService {
 
     @KafkaListener(topics = "test2")
     public void createTaskToSaveVacancies(String message) {
+        log.info("createTaskToSaveVacancies");
         Task task;
         try {
             task = new ObjectMapper().readValue(message, Task.class);
@@ -35,6 +36,7 @@ public class CollectorService {
             Long total = task.pagination().total();
             String param = task.requests().get(0).queryParams().get(0).param();
             String value = task.requests().get(0).queryParams().get(0).value();
+            log.info("createTaskToSaveVacancies: start={}, end={}", 0, total / pageSize);
             for (int i = 0; i < total / pageSize; i++) {
 
                 URI uri = UriComponentsBuilder.fromHttpUrl(resourceUrl)
@@ -47,6 +49,11 @@ public class CollectorService {
                 ResponseEntity<String> response
                         = restTemplate.getForEntity(uri, String.class);
                 smart4itKafkaTemplate.send("test3", response.getBody());
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (JsonProcessingException e) {
             log.error(e.toString());
