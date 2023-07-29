@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -13,6 +14,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import ru.smart4it.collector.event.Task;
 import ru.smart4it.collector.task.HhVacancyEntity;
 import ru.smart4it.collector.task.TaskEntity;
+import ru.smart4it.collector.task.TaskHhVacancyEntity;
+import ru.smart4it.collector.task.TaskHhVacancyRepository;
 import ru.smart4it.collector.task.TaskRepository;
 import ru.smart4it.collector.task.VacancyRepository;
 
@@ -21,6 +24,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -31,7 +35,9 @@ public class HhCollector {
 
     private final VacancyRepository vacancyRepository;
 
-    @KafkaListener(topics = "hh_vacancies")
+    private final TaskHhVacancyRepository taskHhVacancyRepository;
+
+    //@KafkaListener(topics = "hh_vacancies")
     public void createTaskToSaveVacancies(String message) {
         Task task = createTask(message);
         TaskEntity taskEntity = new TaskEntity(task.id(), task.title(), message, OffsetDateTime.now(), OffsetDateTime.now(), false);
@@ -90,20 +96,54 @@ public class HhCollector {
         for (String dataItem : taskData) {
             VacanciesDto vacancies;
             List<HhVacancyEntity> hhVacancyEntities = new ArrayList<>();
+            List<TaskHhVacancyEntity> taskVacancies = new ArrayList<>();
             try {
                 vacancies = new ObjectMapper().readValue(dataItem, VacanciesDto.class);
+
                 for (Map<String, Object> vacancy : vacancies.items()) {
                     HhVacancyEntity hhVacancyEntity = new HhVacancyEntity();
-                    hhVacancyEntity.setTask(List.of(task));
-                    hhVacancyEntity.setDataId(vacancy.get("id").toString());
-                    hhVacancyEntity.setData(new ObjectMapper().writeValueAsString(vacancy));
+                    hhVacancyEntity.setId(vacancy.get("id").toString());
                     hhVacancyEntities.add(hhVacancyEntity);
+
+                    taskVacancies.add(
+                            new TaskHhVacancyEntity(new TaskHhVacancyEntity.TaskHhVacancyEntityId(
+                                    task.getId(),
+                                    hhVacancyEntity.getId()
+                            ))
+                    );
                 }
                 vacancyRepository.saveAll(hhVacancyEntities);
+                taskHhVacancyRepository.saveAll(taskVacancies);
 
             } catch (JsonProcessingException e) {
                 log.error(e.toString());
             }
         }
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    @Transactional
+    public void enrich() {
+        log.info("enrich and save started");
+        Optional<HhVacancyEntity> optVacancy = vacancyRepository.findFirstByDataIsNull();
+        if (optVacancy.isEmpty()) {
+            return;
+        }
+        HhVacancyEntity vacancy = optVacancy.get();
+        RestTemplate restTemplate = new RestTemplate();
+        URI uri = UriComponentsBuilder.fromHttpUrl("https://api.hh.ru/vacancies/" + vacancy.getId())
+                .build()
+                .encode()
+                .toUri();
+        ResponseEntity<String> response
+                = restTemplate.getForEntity(uri, String.class);
+        vacancy.setData(response.getBody());
+        try {
+            vacancyRepository.save(vacancy);
+        } catch (Throwable e) {
+            log.error(e.getMessage());
+        }
+
+        log.info("enrich and save finished");
     }
 }

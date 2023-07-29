@@ -1,7 +1,7 @@
 CREATE TABLE hh_vacancy
 (
-    data_id VARCHAR(250) PRIMARY KEY NOT NULL,
-    data    JSON                     NOT NULL
+    id VARCHAR(25) PRIMARY KEY NOT NULL,
+    data    JSON
 );
 
 COMMENT ON TABLE hh_vacancy IS 'Данные';
