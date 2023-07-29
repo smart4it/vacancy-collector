@@ -27,7 +27,7 @@ public class TaskManagerService {
 
     private final KafkaTemplate<String, String> smart4itKafkaTemplate;
 
-    @Scheduled(cron = "0/5 * * * * *")
+    @Scheduled(fixedDelayString = "${task-manager.startup.interval}")
     @Transactional
     public void createTasks() {
         OffsetDateTime currentTime = OffsetDateTime.now();
@@ -45,10 +45,11 @@ public class TaskManagerService {
                 specMap.put("id", String.valueOf(UUID.randomUUID()));
                 specMap.put("title", taskTemplate.getTitle());
                 specMap.put("timestamp", lastExecution.toString());
+
                 String specification = new ObjectMapper().writeValueAsString(specMap);
                 if (currentTime.isAfter(nextExecution)) {
                     taskTemplate.setLastExecution(currentTime);
-                    smart4itKafkaTemplate.send("test", specification);
+                    smart4itKafkaTemplate.send(taskTemplate.getType(), specification);
                 }
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);

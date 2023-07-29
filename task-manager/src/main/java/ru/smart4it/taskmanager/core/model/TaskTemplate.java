@@ -27,6 +27,8 @@ public class TaskTemplate {
 
     private String title;
 
+    private String type;
+
     @Type(JsonType.class)
     private String specification;
 

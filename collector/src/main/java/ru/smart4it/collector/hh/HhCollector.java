@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -22,32 +21,29 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class HhParser {
-
-    private final KafkaTemplate<String, String> smart4itKafkaTemplate;
+public class HhCollector {
 
     private final TaskRepository taskRepository;
 
     private final VacancyRepository vacancyRepository;
 
-    @KafkaListener(topics = "test")
+    @KafkaListener(topics = "hh_vacancies")
     public void createTaskToSaveVacancies(String message) {
         Task task = createTask(message);
+        TaskEntity taskEntity = new TaskEntity(task.id(), task.title(), message, OffsetDateTime.now(), OffsetDateTime.now(), false);
+        taskRepository.save(taskEntity);
         List<String> taskData = getTaskData(task);
-        saveData(taskData);
+        saveData(taskData, taskEntity);
     }
 
     private Task createTask(String message) {
         Task task;
         try {
             task = new ObjectMapper().readValue(message, Task.class);
-            taskRepository.save(new TaskEntity(task.id(), task.title(), message, OffsetDateTime.now(), OffsetDateTime.now(), false));
-
 
         } catch (JsonProcessingException e) {
             log.error(e.toString());
@@ -89,7 +85,7 @@ public class HhParser {
     }
 
     @Transactional
-    public void saveData(List<String> taskData) {
+    public void saveData(List<String> taskData, TaskEntity task) {
         log.info("saveData");
         for (String dataItem : taskData) {
             VacanciesDto vacancies;
@@ -98,7 +94,7 @@ public class HhParser {
                 vacancies = new ObjectMapper().readValue(dataItem, VacanciesDto.class);
                 for (Map<String, Object> vacancy : vacancies.items()) {
                     HhVacancyEntity hhVacancyEntity = new HhVacancyEntity();
-                    hhVacancyEntity.setTaskId(UUID.randomUUID());
+                    hhVacancyEntity.setTask(List.of(task));
                     hhVacancyEntity.setDataId(vacancy.get("id").toString());
                     hhVacancyEntity.setData(new ObjectMapper().writeValueAsString(vacancy));
                     hhVacancyEntities.add(hhVacancyEntity);
