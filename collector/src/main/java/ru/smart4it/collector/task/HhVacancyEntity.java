@@ -1,10 +1,8 @@
-package ru.smart4it.parser.hh.task;
+package ru.smart4it.collector.task;
 
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;

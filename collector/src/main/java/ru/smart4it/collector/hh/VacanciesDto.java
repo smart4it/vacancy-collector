@@ -1,4 +1,4 @@
-package ru.smart4it.parser.hh.event;
+package ru.smart4it.collector.hh;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

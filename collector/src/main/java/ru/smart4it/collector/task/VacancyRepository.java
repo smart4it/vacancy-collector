@@ -1,4 +1,4 @@
-package ru.smart4it.parser.hh.task;
+package ru.smart4it.collector.task;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package ru.smart4it.parser.hh.task;
+package ru.smart4it.collector.task;
 
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
