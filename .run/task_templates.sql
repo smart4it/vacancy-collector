@@ -6,8 +6,6 @@ INSERT INTO ms_vacancy.task_template (id,title,type, specification,cron_expressi
     "title": "",
     "requests": [
         {
-            "method": "GET",
-            "url": "https://api.hh.ru/vacancies",
             "queryParams": [
 	            {
 	                "param": "text",
@@ -16,9 +14,5 @@ INSERT INTO ms_vacancy.task_template (id,title,type, specification,cron_expressi
             ],
             "body": ""
         }
-    ],
-    "pagination": {
-        "total": 2000,
-        "pageSize": 100
-    }
+    ]
 }','0 * * * * ?','2000-01-01 00:00:00',false);

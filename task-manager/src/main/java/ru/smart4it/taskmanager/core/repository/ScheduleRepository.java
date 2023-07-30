@@ -6,6 +6,6 @@ import ru.smart4it.taskmanager.core.model.TaskTemplate;
 import java.util.List;
 import java.util.UUID;
 
-public interface TaskTemplateRepository extends JpaRepository<TaskTemplate, UUID> {
+public interface ScheduleRepository extends JpaRepository<TaskTemplate, UUID> {
     List<TaskTemplate> findAllByDeletedIsFalse();
 }

@@ -29,10 +29,10 @@ public class ElectorateService {
 
     private final LeaderInstanceRepository leaderInstanceRepository;
 
-    @Value("${task-manager.regular.heartbeat.timeout}")
+    @Value("${electorate.regular.heartbeat.timeout}")
     private Long regularTimeout;
 
-    @Value("${task-manager.leader.heartbeat.timeout}")
+    @Value("${electorate.leader.heartbeat.timeout}")
     private Long leaderTimeout;
 
     private UUID instanceId;
@@ -45,7 +45,7 @@ public class ElectorateService {
      * идентификатором нет в БД, для него будет сгенерирован новый уникальный
      * {@code instanceId}.
      */
-    @Scheduled(fixedDelayString = "${task-manager.regular.heartbeat.interval}")
+    @Scheduled(fixedDelayString = "${electorate.regular.heartbeat.interval}")
     public void updateRegularInstanceHeartbeat() {
         log.debug("updateRegularInstanceHeartbeat started");
         RegularInstance regularInstance = new RegularInstance();
@@ -59,7 +59,7 @@ public class ElectorateService {
     /**
      * Удаляет неактивные экземпляры сервисов.
      */
-    @Scheduled(fixedDelayString = "${task-manager.regular.heartbeat.timeout}")
+    @Scheduled(fixedDelayString = "${electorate.regular.heartbeat.timeout}")
     public void removeExpiredRegularInstances() {
         long timeout = LocalDateTime.now(UTC).toEpochSecond(UTC) - regularTimeout / MS_PER_SECOND;
         regularInstanceRepository.deleteAllByLastHeartbeatIsBefore(timeout);
@@ -83,7 +83,7 @@ public class ElectorateService {
      * равен 1, что позволяет избавиться от этапа периодической чистки таблицы
      * лидеров (в отличие от обычных экземпляров).
      */
-    @Scheduled(fixedDelayString = "${task-manager.leader.heartbeat.timeout}")
+    @Scheduled(fixedDelayString = "${electorate.leader.heartbeat.timeout}")
     @Transactional
     public void determineLeader() {
         if (instanceId == null) {
@@ -109,7 +109,7 @@ public class ElectorateService {
      * то обновление не выполниться, т.к. {@code leader.instanceId} !=
      * {@code current.instanceId}.
      */
-    @Scheduled(fixedDelayString = "${task-manager.leader.heartbeat.interval}")
+    @Scheduled(fixedDelayString = "${electorate.leader.heartbeat.interval}")
     public void updateLeaderHeartbeat() {
         if (instanceId == null) {
             return;

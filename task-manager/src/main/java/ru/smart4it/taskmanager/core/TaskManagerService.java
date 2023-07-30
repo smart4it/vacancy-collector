@@ -11,7 +11,7 @@ import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.smart4it.taskmanager.core.model.TaskTemplate;
-import ru.smart4it.taskmanager.core.repository.TaskTemplateRepository;
+import ru.smart4it.taskmanager.core.repository.ScheduleRepository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -23,38 +23,48 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TaskManagerService {
 
-    private final TaskTemplateRepository taskTemplateRepository;
+    private final ScheduleRepository scheduleRepository;
 
     private final KafkaTemplate<String, String> smart4itKafkaTemplate;
 
-    @Scheduled(fixedDelayString = "${task-manager.startup.interval}")
+    /**
+     * Метод проверяет расписание, создает задачу и отправляет в очередь на исполнение.
+     */
     @Transactional
+    @Scheduled(fixedDelayString = "${task-manager.startup.interval}")
     public void createTasks() {
         OffsetDateTime currentTime = OffsetDateTime.now();
-        List<TaskTemplate> taskTemplates = taskTemplateRepository.findAllByDeletedIsFalse();
-        for (TaskTemplate taskTemplate : taskTemplates) {
-            OffsetDateTime lastExecution = taskTemplate.getLastExecution();
-            OffsetDateTime nextExecution = CronExpression.parse(taskTemplate.getCronExpression()).next(lastExecution);
-            if (nextExecution == null) {
-                return;
+        List<TaskTemplate> templates = scheduleRepository.findAllByDeletedIsFalse();
+        for (TaskTemplate taskTemplate : templates) {
+            if (needToDo(taskTemplate, currentTime)) {
+                String taskAsJson = createTask(taskTemplate);
+                String channel = taskTemplate.getType();
+                smart4itKafkaTemplate.send(channel, taskAsJson);
             }
-            try {
 
-                Map<String, Object> specMap = new ObjectMapper().readValue(taskTemplate.getSpecification(),
-                                                                           new TypeReference<>() {});
-                specMap.put("id", String.valueOf(UUID.randomUUID()));
-                specMap.put("title", taskTemplate.getTitle());
-                specMap.put("timestamp", lastExecution.toString());
-
-                String specification = new ObjectMapper().writeValueAsString(specMap);
-                if (currentTime.isAfter(nextExecution)) {
-                    taskTemplate.setLastExecution(currentTime);
-                    smart4itKafkaTemplate.send(taskTemplate.getType(), specification);
-                }
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
+    private String createTask(TaskTemplate taskTemplate) {
+        try {
+            Map<String, Object> specMap = new ObjectMapper().readValue(taskTemplate.getSpecification(),
+                                                                       new TypeReference<>() {
+                                                                       });
+            specMap.put("id", String.valueOf(UUID.randomUUID()));
+            specMap.put("title", taskTemplate.getTitle());
+            specMap.put("timestamp", taskTemplate.getLastExecution().toString());
+            return new ObjectMapper().writeValueAsString(specMap);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean needToDo(TaskTemplate taskTemplate, OffsetDateTime currentTime) {
+        OffsetDateTime lastExecution = taskTemplate.getLastExecution();
+        OffsetDateTime nextExecution = CronExpression.parse(taskTemplate.getCronExpression()).next(lastExecution);
+        if (nextExecution == null) {
+            return false;
+        }
+        return currentTime.isAfter(nextExecution);
+    }
 }
