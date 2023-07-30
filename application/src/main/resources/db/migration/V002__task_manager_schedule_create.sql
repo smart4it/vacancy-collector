@@ -1,19 +1,19 @@
-CREATE TABLE taskTemplate
+CREATE TABLE schedule
 (
     id              UUID PRIMARY KEY            NOT NULL DEFAULT gen_random_uuid(),
-    title           VARCHAR(250)                NOT NULL,
+    name            VARCHAR(250)                NOT NULL,
     type            VARCHAR(50)                 NOT NULL,
-    specification   JSON                        NOT NULL,
+    task_template   JSON                        NOT NULL,
     cron_expression VARCHAR(100)                NOT NULL,
-    last_execution  TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT '1970-01-01',
+    execution_time  TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT '1970-01-01',
     deleted         BOOLEAN                     NOT NULL DEFAULT false
 );
 
-COMMENT ON TABLE taskTemplate IS 'Расписание запуска задач';
-COMMENT ON COLUMN taskTemplate.id IS 'Идентификатор шаблона задачи';
-COMMENT ON COLUMN taskTemplate.title IS 'Заголовок шаблона задачи';
-COMMENT ON COLUMN taskTemplate.type IS 'Тип задачи';
-COMMENT ON COLUMN taskTemplate.specification IS 'Спецификация задачи';
-COMMENT ON COLUMN taskTemplate.cron_expression IS 'Расписание в виде cron выражения';
-COMMENT ON COLUMN taskTemplate.last_execution IS 'Время последнего запуска';
-COMMENT ON COLUMN taskTemplate.deleted IS 'Признак удаления';
+COMMENT ON TABLE schedule IS 'Расписание запуска задач';
+COMMENT ON COLUMN schedule.id IS 'Идентификатор события';
+COMMENT ON COLUMN schedule.name IS 'Наименование события';
+COMMENT ON COLUMN schedule.type IS 'Тип события';
+COMMENT ON COLUMN schedule.task_template IS 'Шаблон задачи';
+COMMENT ON COLUMN schedule.cron_expression IS 'Расписание в виде cron выражения';
+COMMENT ON COLUMN schedule.execution_time IS 'Время последнего запуска';
+COMMENT ON COLUMN schedule.deleted IS 'Признак удаленного события';

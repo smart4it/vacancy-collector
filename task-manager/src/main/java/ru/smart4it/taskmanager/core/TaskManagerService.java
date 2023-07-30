@@ -1,23 +1,25 @@
 package ru.smart4it.taskmanager.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ru.smart4it.taskmanager.core.model.TaskTemplate;
+import ru.smart4it.taskmanager.core.model.Schedule;
+import ru.smart4it.taskmanager.core.model.ScheduleEvent;
+import ru.smart4it.taskmanager.core.model.Task;
+import ru.smart4it.taskmanager.core.model.TaskType;
 import ru.smart4it.taskmanager.core.repository.ScheduleRepository;
 
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Менеджер задач.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -27,44 +29,37 @@ public class TaskManagerService {
 
     private final KafkaTemplate<String, String> smart4itKafkaTemplate;
 
+    private final ObjectMapper objectMapper;
+
     /**
-     * Метод проверяет расписание, создает задачу и отправляет в очередь на исполнение.
+     * Создание задач по расписанию.
+     * <p>
+     * Метод проверяет расписание, при необходимости создает задачи и отправляет
+     * их в очередь на исполнение. Топик очереди определяется из типа задачи.
      */
     @Transactional
     @Scheduled(fixedDelayString = "${task-manager.startup.interval}")
-    public void createTasks() {
+    public void execute() {
         OffsetDateTime currentTime = OffsetDateTime.now();
-        List<TaskTemplate> templates = scheduleRepository.findAllByDeletedIsFalse();
-        for (TaskTemplate taskTemplate : templates) {
-            if (needToDo(taskTemplate, currentTime)) {
-                String taskAsJson = createTask(taskTemplate);
-                String channel = taskTemplate.getType();
-                smart4itKafkaTemplate.send(channel, taskAsJson);
-            }
-
+        Schedule schedule = new Schedule(scheduleRepository.findAllByDeletedIsFalse());
+        for (ScheduleEvent event : schedule.getTriggeredEvents(currentTime)) {
+            String taskAsJson = createTask(event);
+            TaskType topic = event.getType();
+            smart4itKafkaTemplate.send(topic.toString(), taskAsJson);
         }
     }
 
-    private String createTask(TaskTemplate taskTemplate) {
+    private String createTask(ScheduleEvent scheduleEvent) {
         try {
-            Map<String, Object> specMap = new ObjectMapper().readValue(taskTemplate.getSpecification(),
-                                                                       new TypeReference<>() {
-                                                                       });
-            specMap.put("id", String.valueOf(UUID.randomUUID()));
-            specMap.put("title", taskTemplate.getTitle());
-            specMap.put("timestamp", taskTemplate.getLastExecution().toString());
-            return new ObjectMapper().writeValueAsString(specMap);
+            Task task = objectMapper.readValue(scheduleEvent.getTaskTemplate(), Task.class);
+            task.setId(UUID.randomUUID());
+            task.setTitle(scheduleEvent.getTitle());
+            task.setType(scheduleEvent.getType());
+            task.setEvent(scheduleEvent);
+            task.setSpecification(scheduleEvent.getTaskTemplate());
+            return objectMapper.writeValueAsString(task);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private boolean needToDo(TaskTemplate taskTemplate, OffsetDateTime currentTime) {
-        OffsetDateTime lastExecution = taskTemplate.getLastExecution();
-        OffsetDateTime nextExecution = CronExpression.parse(taskTemplate.getCronExpression()).next(lastExecution);
-        if (nextExecution == null) {
-            return false;
-        }
-        return currentTime.isAfter(nextExecution);
     }
 }

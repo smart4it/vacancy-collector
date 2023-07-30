@@ -1,9 +1,6 @@
-INSERT INTO ms_vacancy.task_template (id,title,type, specification,cron_expression,last_execution,deleted) VALUES
-	 ('ca2c1a31-b8e1-4df8-9f67-3d261b6daf7d','hh java', 'hh_vacancies', '{
+INSERT INTO ms_vacancy.schedule (id, name, type, task_template, cron_expression, last_execution, deleted) VALUES
+	 ('ca2c1a31-b8e1-4df8-9f67-3d261b6daf7d','hh java', 'COLLECT_HH_VACANCY', '{
     "version": "1",
-    "id": "",
-    "timestamp": "",
-    "title": "",
     "requests": [
         {
             "queryParams": [
@@ -11,8 +8,7 @@ INSERT INTO ms_vacancy.task_template (id,title,type, specification,cron_expressi
 	                "param": "text",
 	                "value": "java"
 	            }
-            ],
-            "body": ""
+            ]
         }
     ]
 }','0 * * * * ?','2000-01-01 00:00:00',false);

@@ -3,6 +3,8 @@ package ru.smart4it.taskmanager.core.model;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,7 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "schedule")
-public class TaskTemplate {
+public class ScheduleEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,17 +33,18 @@ public class TaskTemplate {
     private String title;
 
     @Column(name = "type")
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private TaskType type;
 
     @Type(JsonType.class)
-    @Column(name = "specification")
-    private String specification;
+    @Column(name = "task_template")
+    private String taskTemplate;
 
     @Column(name = "cron_expression")
     private String cronExpression;
 
-    @Column(name = "last_execution")
-    private OffsetDateTime lastExecution;
+    @Column(name = "execution_time")
+    private OffsetDateTime executionTime;
 
     @Column(name = "deleted")
     private Boolean deleted;
