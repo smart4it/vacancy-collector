@@ -37,7 +37,13 @@ public class HhCollector {
 
     private final TaskHhVacancyRepository taskHhVacancyRepository;
 
-    //@KafkaListener(topics = "hh_vacancies")
+    /**
+     * Получает из очереди сообщений задание, выполняет его, собирая информацию
+     * из указанного источника и сохраняет в БД.
+     *
+     * @param message сообщение со спецификацией задания.
+     */
+    @KafkaListener(topics = "hh_vacancies")
     public void createTaskToSaveVacancies(String message) {
         Task task = createTask(message);
         TaskEntity taskEntity = new TaskEntity(task.id(), task.title(), message, OffsetDateTime.now(), OffsetDateTime.now(), false);
