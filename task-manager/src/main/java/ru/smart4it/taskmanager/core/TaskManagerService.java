@@ -40,13 +40,16 @@ public class TaskManagerService {
     @Transactional
     @Scheduled(fixedDelayString = "${task-manager.startup.interval}")
     public void execute() {
+        log.debug("Schedule check started");
         OffsetDateTime currentTime = OffsetDateTime.now();
         Schedule schedule = new Schedule(scheduleRepository.findAllByDeletedIsFalse());
         for (ScheduleEvent event : schedule.getTriggeredEvents(currentTime)) {
             String taskAsJson = createTask(event);
             TaskType topic = event.getType();
             smart4itKafkaTemplate.send(topic.toString(), taskAsJson);
+            log.debug("Task created and submitted for execution: {}", taskAsJson);
         }
+        log.debug("Schedule check completed");
     }
 
     private String createTask(ScheduleEvent scheduleEvent) {
@@ -59,6 +62,7 @@ public class TaskManagerService {
             task.setSpecification(scheduleEvent.getTaskTemplate());
             return objectMapper.writeValueAsString(task);
         } catch (JsonProcessingException e) {
+            log.debug("Error processing task to json for event={}", scheduleEvent);
             throw new RuntimeException(e);
         }
     }
